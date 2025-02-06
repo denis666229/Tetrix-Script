@@ -172,6 +172,7 @@ end)
 -- Tab: "Player"
 local PlayerTab = createTab("PlayerTab", "Player", 70, function()
     clearButtons()
+    
     local GodModeButton = createButton("GodModeButton", "God Mode", 20)
     GodModeButton.MouseButton1Click:Connect(function()
         local player = game.Players.LocalPlayer
@@ -185,6 +186,26 @@ local PlayerTab = createTab("PlayerTab", "Player", 70, function()
     JumpButton.MouseButton1Click:Connect(function()
         game.Players.LocalPlayer.Character.Humanoid.UseJumpPower = true
         game.Players.LocalPlayer.Character.Humanoid.JumpPower = 150
+    end)
+
+    local BunnyHopEnabled = false
+    
+    local BunnyHopButton = createButton("BunnyHopButton", "Auto BunnyHop", 140)
+    BunnyHopButton.MouseButton1Click:Connect(function()
+        BunnyHopEnabled = not BunnyHopEnabled
+        BunnyHopButton.Text = BunnyHopEnabled and "Auto BunnyHop: ON" or "Auto BunnyHop: OFF"
+
+        if BunnyHopEnabled then
+            spawn(function()
+                while BunnyHopEnabled do
+                    local player = game.Players.LocalPlayer
+                    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    end
+                    wait(0.3) -- Интервал прыжков
+                end
+            end)
+        end
     end)
 end)
 
