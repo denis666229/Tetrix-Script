@@ -172,39 +172,28 @@ end)
 -- Tab: "Player"
 local PlayerTab = createTab("PlayerTab", "Player", 70, function()
     clearButtons()
-    
-    local GodModeButton = createButton("GodModeButton", "God Mode", 20)
-    GodModeButton.MouseButton1Click:Connect(function()
-        local player = game.Players.LocalPlayer
-        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-            player.Character.Humanoid.MaxHealth = math.huge
-            player.Character.Humanoid.Health = math.huge
-        end
-    end)
-
-    local JumpButton = createButton("JumpButton", "Infinite Jump", 80)
-    JumpButton.MouseButton1Click:Connect(function()
-        game.Players.LocalPlayer.Character.Humanoid.UseJumpPower = true
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 150
-    end)
 
     local BunnyHopEnabled = false
-    
-    local BunnyHopButton = createButton("BunnyHopButton", "Auto BunnyHop", 140)
+    local BunnyHopButton = createButton("BunnyHopButton", "Auto BunnyHop", 20)
     BunnyHopButton.MouseButton1Click:Connect(function()
         BunnyHopEnabled = not BunnyHopEnabled
         BunnyHopButton.Text = BunnyHopEnabled and "Auto BunnyHop: ON" or "Auto BunnyHop: OFF"
     end)
 
-    -- Обрабатываем нажатие клавиши
     local UserInputService = game:GetService("UserInputService")
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
 
+    -- Проверяем зажатие пробела и делаем BunnyHop
     UserInputService.InputBegan:Connect(function(input, processed)
         if BunnyHopEnabled and input.KeyCode == Enum.KeyCode.Space and not processed then
-            local player = game.Players.LocalPlayer
-            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-                player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-            end
+            RunService.RenderStepped:Connect(function()
+                if BunnyHopEnabled and humanoid and humanoid.FloorMaterial ~= Enum.Material.Air then
+                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+            end)
         end
     end)
 end)
