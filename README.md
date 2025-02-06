@@ -194,20 +194,21 @@ local PlayerTab = createTab("PlayerTab", "Player", 70, function()
     BunnyHopButton.MouseButton1Click:Connect(function()
         BunnyHopEnabled = not BunnyHopEnabled
         BunnyHopButton.Text = BunnyHopEnabled and "Auto BunnyHop: ON" or "Auto BunnyHop: OFF"
+    end)
 
-        if BunnyHopEnabled then
-            spawn(function()
-                while BunnyHopEnabled do
-                    local player = game.Players.LocalPlayer
-                    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-                        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                    end
-                    wait(0.3) -- Интервал прыжков
-                end
-            end)
+    -- Обрабатываем нажатие клавиши
+    local UserInputService = game:GetService("UserInputService")
+
+    UserInputService.InputBegan:Connect(function(input, processed)
+        if BunnyHopEnabled and input.KeyCode == Enum.KeyCode.Space and not processed then
+            local player = game.Players.LocalPlayer
+            if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
         end
     end)
 end)
+
 
 -- Tab: "Weapons"
 local WeaponTab = createTab("WeaponTab", "Weapons", 130, function()
